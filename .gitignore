@@ -1,0 +1,27 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+venv/
+env/
+ENV/
+.env
+
+# Streamlit
+.streamlit/
+
+# macOS
+.DS_Store
+
+# IDEs
+.vscode/
+.idea/
+
+# Hackathon project specific data
+backend/data/sessions/
+backend/data/*.json
+*.csv
+*.xlsx
+*.numbers
