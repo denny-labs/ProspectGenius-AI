@@ -38,7 +38,9 @@ st.markdown("""
     }
     
     /* Fix buttons having white backgrounds with white text */
-    [data-testid="stButton"] button {
+    [data-testid="stButton"] button,
+    [data-testid="stFormSubmitButton"] button,
+    [data-testid="baseButton-secondary"] {
         background-color: #1f2937 !important;
         color: #c9d1d9 !important;
         border: 1px solid rgba(255, 255, 255, 0.1) !important;
