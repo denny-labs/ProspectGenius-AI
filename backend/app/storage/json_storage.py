@@ -63,7 +63,9 @@ def get_lead(rm_owner: str, lead_id: str) -> Optional[Dict[str, Any]]:
     """Retrieves a single lead by ID for a specific RM."""
     leads = _load_data(rm_owner)
     for lead in leads:
-        if lead.get("lead_id") == lead_id:
+        db_lead_id = str(lead.get("lead_id", ""))
+        # Match exact UUID or allow partial matching (since UI truncates IDs)
+        if db_lead_id == lead_id or db_lead_id.startswith(str(lead_id).lower()):
             return lead
     return None
 

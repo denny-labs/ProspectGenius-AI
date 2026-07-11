@@ -3,7 +3,7 @@ Leads API Endpoints.
 
 Handles CRUD operations, file uploads (CSV, Numbers, Excel), and LLM draft generation.
 """
-from fastapi import APIRouter, File, UploadFile, HTTPException
+from fastapi import APIRouter, File, UploadFile, Form, Request, HTTPException
 from typing import Any, Dict
 import uuid
 from app.agents.graph import graph
@@ -15,7 +15,7 @@ from app.api.v1.endpoints.file_parsers import extract_text_from_bytes, extract_t
 router = APIRouter()
 
 @router.post("/upload")
-async def upload_document(rm_owner: str, file: UploadFile = File(...)) -> Any:
+async def upload_document(rm_owner: str = Form(...), file: UploadFile = File(...)) -> Any:
     """
     Endpoint for uploading lead data files (TXT, PDF, CSV, Excel, Numbers).
     Parses the file, extracts leads, runs them through the LangGraph AI workflow,
@@ -146,23 +146,34 @@ async def get_active_leads(rm_owner: str) -> Any:
     return {"status": "success", "leads": leads}
 
 @router.post("/update-info")
-async def update_info(payload: UpdateLeadRequest) -> Any:
-    lead = json_storage.get_lead(payload.rm_owner, payload.lead_id)
+async def update_info(request: Request) -> Any:
+    form_data = await request.form()
+    rm_owner = form_data.get("rm_owner")
+    lead_id = form_data.get("lead_id")
+    
+    lead = json_storage.get_lead(rm_owner, lead_id)
     if not lead:
         raise HTTPException(status_code=404, detail="Lead not found")
         
-    update_data = payload.dict(exclude_unset=True)
-    for k, v in update_data.items():
-        if v is not None:
-            lead[k] = v
+    for k, v in form_data.items():
+        if k not in ["rm_owner", "lead_id"] and v is not None and v != "":
+            # Handle type conversion for floats if necessary based on schema
+            if k in ["income_mentioned", "budget", "property_value", "existing_emi"]:
+                try:
+                    lead[k] = float(v)
+                except ValueError:
+                    pass
+            else:
+                lead[k] = v
             
     json_storage.save_lead(lead)
     return {"status": "success", "state": lead}
 
 @router.post("/recalculate")
-async def recalculate(payload: Dict[str, Any]) -> Any:
-    rm_owner = payload.get("rm_owner")
-    lead_id = payload.get("lead_id")
+async def recalculate(
+    rm_owner: str = Form(...),
+    lead_id: str = Form(...)
+) -> Any:
     lead = json_storage.get_lead(rm_owner, lead_id)
     if not lead:
         raise HTTPException(status_code=404, detail="Lead not found")
@@ -179,19 +190,22 @@ async def recalculate(payload: Dict[str, Any]) -> Any:
     return {"status": "success", "state": lead}
 
 @router.post("/generate-draft")
-async def generate_draft(payload: Dict[str, Any]) -> Any:
+async def generate_draft(
+    rm_owner: str = Form(...),
+    lead_id: str = Form(...),
+    channel: str = Form("WhatsApp"),
+    tone: str = Form("Professional")
+) -> Any:
     """
     Triggers the AI Outreach agent to dynamically generate a personalized 
     WhatsApp, Email, or SMS draft for a specific lead based on a chosen tone.
     """
-    rm_owner = payload.get("rm_owner")
-    lead_id = payload.get("lead_id")
     lead = json_storage.get_lead(rm_owner, lead_id)
     if not lead:
         raise HTTPException(status_code=404, detail="Lead not found")
         
-    lead["draft_channel"] = payload.get("channel", "WhatsApp")
-    lead["draft_tone"] = payload.get("tone", "Professional")
+    lead["draft_channel"] = channel
+    lead["draft_tone"] = tone
         
     from app.agents.nodes.outreach import generate_outreach
     lead = generate_outreach(lead)

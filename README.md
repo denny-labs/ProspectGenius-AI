@@ -84,24 +84,45 @@ The FastAPI backend exposes several REST endpoints for the frontend to interact 
 
 ### 3. `POST /api/v1/leads/update-info`
 - **Purpose**: Manually updates specific fields of an existing lead (e.g., when an RM corrects a parsed value in the UI) and saves it back to storage.
-- **Required Inputs (JSON Body)**:
+- **Required Inputs (Form Data)**:
   - `rm_owner` (String): The username of the RM.
   - `lead_id` (String): The unique UUID of the lead.
   - *(Optional)* Any other fields to update (e.g., `customer_name`, `income_mentioned`, etc.).
+- **Postman (Bulk Edit) Example**:
+  *(In Postman, go to Body -> form-data, click "Bulk Edit", and paste this:)*
+  ```text
+  rm_owner:selvan
+  lead_id:1234-abcd
+  income_mentioned:50000
+  ```
 
 ### 4. `POST /api/v1/leads/recalculate`
 - **Purpose**: Re-runs specific agent nodes (Field Validation, Document Intelligence, Eligibility Underwriting) on an existing lead after its data has been manually updated.
-- **Required Inputs (JSON Body)**:
+- **Required Inputs (Form Data)**:
   - `rm_owner` (String): The username of the RM.
   - `lead_id` (String): The unique UUID of the lead.
+- **Postman (Bulk Edit) Example**:
+  *(In Postman, go to Body -> form-data, click "Bulk Edit", and paste this:)*
+  ```text
+  rm_owner:selvan
+  lead_id:1234-abcd
+  ```
 
 ### 5. `POST /api/v1/leads/generate-draft`
 - **Purpose**: Triggers the AI Outreach agent to dynamically analyze the lead's profile in real-time and generate a personalized communication draft (WhatsApp, Email, or SMS).
-- **Required Inputs (JSON Body)**:
+- **Required Inputs (Form Data)**:
   - `rm_owner` (String): The username of the RM.
   - `lead_id` (String): The unique UUID of the lead.
   - `channel` (String): The desired medium (e.g., `WhatsApp`, `Email`).
   - `tone` (String): The desired tone (e.g., `Professional`, `Empathetic`, `Urgent`).
+- **Postman (Bulk Edit) Example**:
+  *(In Postman, go to Body -> form-data, click "Bulk Edit", and paste this:)*
+  ```text
+  rm_owner:selvan
+  lead_id:1234-abcd
+  channel:WhatsApp
+  tone:Urgent
+  ```
 
 ---
 

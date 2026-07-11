@@ -28,21 +28,21 @@ class APIClient:
 
     @staticmethod
     def update_info(payload: dict):
-        resp = requests.post(f"{API_URL}/leads/update-info", json=payload)
+        resp = requests.post(f"{API_URL}/leads/update-info", data=payload)
         if resp.status_code == 200:
             return resp.json()
         return {"status": "error"}
 
     @staticmethod
     def recalculate(payload: dict):
-        resp = requests.post(f"{API_URL}/leads/recalculate", json=payload)
+        resp = requests.post(f"{API_URL}/leads/recalculate", data=payload)
         if resp.status_code == 200:
             return resp.json()
         return {"status": "error"}
 
     @staticmethod
     def generate_draft(payload: dict):
-        resp = requests.post(f"{API_URL}/leads/generate-draft", json=payload)
+        resp = requests.post(f"{API_URL}/leads/generate-draft", data=payload)
         if resp.status_code == 200:
             return resp.json()
         return {"status": "error"}
