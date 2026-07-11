@@ -19,27 +19,31 @@ st.markdown("""
         font-family: 'Inter', sans-serif;
     }
     .stApp {
-        background-color: #0d1117;
-        color: #c9d1d9;
+        background-color: #0d1117 !important;
+        color: #c9d1d9 !important;
     }
     
     /* Force Streamlit elements to dark mode to override Windows browser cache */
     header[data-testid="stHeader"] {
         background-color: transparent !important;
     }
-    .stMarkdown, .stText, p, span, div {
-        color: inherit;
-    }
-    div[data-baseweb="select"] > div {
-        background-color: rgba(255, 255, 255, 0.05) !important;
-        border-color: rgba(255, 255, 255, 0.1) !important;
+    
+    /* Target inputs, textareas, and dropdowns explicitly using data-testid */
+    [data-testid="stTextArea"] textarea,
+    [data-testid="stTextInput"] input,
+    [data-testid="stSelectbox"] div[data-baseweb="select"] > div {
+        background-color: #161b22 !important;
         color: #c9d1d9 !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
     }
-    .stTextInput > div > div > input, .stTextArea > div > div > textarea {
-        background-color: rgba(255, 255, 255, 0.05) !important;
+    
+    /* Fix buttons having white backgrounds with white text */
+    [data-testid="stButton"] button {
+        background-color: #1f2937 !important;
         color: #c9d1d9 !important;
-        border-color: rgba(255, 255, 255, 0.1) !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
     }
+
     
     /* Glassmorphism Cards */
     .glass-card {
