@@ -67,6 +67,44 @@ flowchart LR
 
 ---
 
+## 🔌 API Routes Documentation
+
+The FastAPI backend exposes several REST endpoints for the frontend to interact with the system. Here is a breakdown of what each route does and what inputs are required to test it:
+
+### 1. `POST /api/v1/leads/upload`
+- **Purpose**: Uploads raw lead data (TXT, PDF, CSV, Excel, Numbers), parses the content, runs it through the AI workflow (or bulk import logic), and saves the processed leads to the RM's session.
+- **Required Inputs**:
+  - `rm_owner` (Query Parameter): The username of the RM (e.g., `selvan`).
+  - `file` (Form Data): The file to upload.
+
+### 2. `GET /api/v1/leads/active-leads`
+- **Purpose**: Retrieves all active, processed leads belonging to a specific RM session from the JSON storage.
+- **Required Inputs**:
+  - `rm_owner` (Query Parameter): The username of the RM.
+
+### 3. `POST /api/v1/leads/update-info`
+- **Purpose**: Manually updates specific fields of an existing lead (e.g., when an RM corrects a parsed value in the UI) and saves it back to storage.
+- **Required Inputs (JSON Body)**:
+  - `rm_owner` (String): The username of the RM.
+  - `lead_id` (String): The unique UUID of the lead.
+  - *(Optional)* Any other fields to update (e.g., `customer_name`, `income_mentioned`, etc.).
+
+### 4. `POST /api/v1/leads/recalculate`
+- **Purpose**: Re-runs specific agent nodes (Field Validation, Document Intelligence, Eligibility Underwriting) on an existing lead after its data has been manually updated.
+- **Required Inputs (JSON Body)**:
+  - `rm_owner` (String): The username of the RM.
+  - `lead_id` (String): The unique UUID of the lead.
+
+### 5. `POST /api/v1/leads/generate-draft`
+- **Purpose**: Triggers the AI Outreach agent to dynamically analyze the lead's profile in real-time and generate a personalized communication draft (WhatsApp, Email, or SMS).
+- **Required Inputs (JSON Body)**:
+  - `rm_owner` (String): The username of the RM.
+  - `lead_id` (String): The unique UUID of the lead.
+  - `channel` (String): The desired medium (e.g., `WhatsApp`, `Email`).
+  - `tone` (String): The desired tone (e.g., `Professional`, `Empathetic`, `Urgent`).
+
+---
+
 ## 💻 Cross-Platform Compatibility
 
 **Does this work on Windows?** 

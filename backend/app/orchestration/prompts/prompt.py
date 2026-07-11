@@ -60,11 +60,17 @@ Profile:
 """
 
 OUTREACH_PROMPT = """
-You are an engagement agent. Create a phone script and a text message to ask the customer for their missing fields: {missing_fields}.
+You are an expert Relationship Manager (RM). Your task is to draft a highly personalized, empathetic, and consultative outreach message to the customer.
+DO NOT just output a generic list of missing documents. 
+You MUST analyze the customer's specific profile in real-time (their occupation/employer, their city, their stated income, the exact loan type and budget they requested) and weave these details naturally into your message to show that we have reviewed their specific case.
+Only request the documents listed in {missing_fields}. Do not ask for anything else.
+
 The text message must be formatted specifically for the '{channel}' channel and written in a '{tone}' tone.
 Return ONLY a valid JSON object.
+
 Profile:
 {profile}
+
 Schema:
 {{
   "rm_phone_script": "string",

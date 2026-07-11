@@ -20,8 +20,14 @@ def generate_outreach(state: LeadState) -> LeadState:
     Returns:
         LeadState: The updated state containing 'rm_whatsapp_draft' and 'rm_phone_script'.
     """
+    import logging
+    logger = logging.getLogger(__name__)
+    
+    logger.info(f"==========> [OUTREACH AGENT STARTING] Lead ID: {state.get('lead_id')}")
+    
     llm = get_llm(temperature=0.7)
     if not llm:
+        logger.warning("[OUTREACH AGENT] No LLM configured. Falling back to default script.")
         state["rm_phone_script"] = "Hi, calling to request missing details for your application."
         state["rm_whatsapp_draft"] = "Hello! Please share your missing documents."
         return state
@@ -38,9 +44,14 @@ def generate_outreach(state: LeadState) -> LeadState:
         tone=tone
     )
     
+    logger.debug(f"[OUTREACH AGENT] Constructed Prompt for LLM:\n{prompt}")
+    
     try:
+        logger.info("[OUTREACH AGENT] Sending request to LLM...")
         response = llm.invoke(prompt)
         content = response.content
+        logger.debug(f"[OUTREACH AGENT] Raw LLM Response:\n{content}")
+        
         if isinstance(content, list):
             content = " ".join([item.get("text", "") for item in content if isinstance(item, dict)])
         elif not isinstance(content, str):
@@ -51,9 +62,15 @@ def generate_outreach(state: LeadState) -> LeadState:
             data = json.loads(match.group(0))
             if "rm_phone_script" in data:
                 state["rm_phone_script"] = data["rm_phone_script"]
+                logger.info("[OUTREACH AGENT] Successfully parsed rm_phone_script.")
             if "rm_whatsapp_draft" in data:
                 state["rm_whatsapp_draft"] = data["rm_whatsapp_draft"]
-    except Exception as e:
-        print(f"Outreach error: {e}")
+                logger.info("[OUTREACH AGENT] Successfully parsed rm_whatsapp_draft.")
+        else:
+            logger.error("[OUTREACH AGENT] Failed to parse JSON from LLM response.")
             
+    except Exception as e:
+        logger.error(f"[OUTREACH AGENT] Error generating outreach: {e}", exc_info=True)
+            
+    logger.info(f"<========== [OUTREACH AGENT FINISHED] Lead ID: {state.get('lead_id')}")
     return state

@@ -24,19 +24,22 @@ async def upload_document(rm_owner: str, file: UploadFile = File(...)) -> Any:
     content = await file.read()
     ext = file.filename.lower().split('.')[-1] if '.' in file.filename else ''
     
+    import logging
+    logger = logging.getLogger(__name__)
+
     if ext in ['numbers', 'xlsx', 'xls', 'csv']:
-        print(f"\\n---> [BULK IMPORT START] Detected tabular file: {file.filename}")
+        logger.info(f"[BULK IMPORT START] Detected tabular file: {file.filename}")
         rows = extract_tabular_data_from_bytes(file.filename, content)
-        print(f"---> [BULK IMPORT PARSE] Successfully extracted {len(rows)} rows from the file")
+        logger.info(f"[BULK IMPORT PARSE] Successfully extracted {len(rows)} rows from the file")
         
         if not rows:
-            print("---> [BULK IMPORT ERROR] No rows found or parsing failed!")
+            logger.error("[BULK IMPORT ERROR] No rows found or parsing failed!")
             raise HTTPException(status_code=400, detail="Could not extract data from tabular file")
             
-        print("---> [BULK IMPORT SAVE] Mapping columns and saving to database...")
+        logger.info("[BULK IMPORT SAVE] Mapping columns and saving to database...")
         for idx, row in enumerate(rows):
             if idx == 0:
-                print(f"---> [BULK IMPORT PREVIEW] First row Customer Name: {row.get('Customer_Name')}")
+                logger.info(f"[BULK IMPORT PREVIEW] First row Customer Name: {row.get('Customer_Name')}")
             lead_id = str(uuid.uuid4())
             def safe_float(val):
                 try:

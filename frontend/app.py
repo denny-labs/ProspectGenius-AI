@@ -261,8 +261,8 @@ with col2:
             missing = lead_data.get("missing_fields", [])
             all_reqs = ["PAN Card", "Aadhaar", "Salary Slip", "Bank Statement"]
             for req in all_reqs:
-                is_missing = any(req.lower()[:4] in m.lower() for m in missing)
-                if is_missing or (req == "Salary Slip" and "income" in missing):
+                is_missing = any(req.lower()[:3] in m.lower() for m in missing)
+                if is_missing or (req == "Salary Slip" and any("income" in m.lower() for m in missing)):
                     checklist_html += f"<div style='margin-bottom:8px;'>✘ {req} <span style='color: #ef4444; font-size: 11px; float: right; font-weight:bold;'>[MISSING]</span></div>"
                 else:
                     checklist_html += f"<div style='margin-bottom:8px;'>✔ {req} <span style='color: #10b981; font-size: 11px; float: right; font-weight:bold;'>[DONE]</span></div>"
