@@ -23,6 +23,24 @@ st.markdown("""
         color: #c9d1d9;
     }
     
+    /* Force Streamlit elements to dark mode to override Windows browser cache */
+    header[data-testid="stHeader"] {
+        background-color: transparent !important;
+    }
+    .stMarkdown, .stText, p, span, div {
+        color: inherit;
+    }
+    div[data-baseweb="select"] > div {
+        background-color: rgba(255, 255, 255, 0.05) !important;
+        border-color: rgba(255, 255, 255, 0.1) !important;
+        color: #c9d1d9 !important;
+    }
+    .stTextInput > div > div > input, .stTextArea > div > div > textarea {
+        background-color: rgba(255, 255, 255, 0.05) !important;
+        color: #c9d1d9 !important;
+        border-color: rgba(255, 255, 255, 0.1) !important;
+    }
+    
     /* Glassmorphism Cards */
     .glass-card {
         background: rgba(255, 255, 255, 0.03);
