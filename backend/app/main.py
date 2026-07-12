@@ -22,10 +22,10 @@ logging.basicConfig(
     ]
 )
 logger = logging.getLogger(__name__)
-logger.info("Starting Antigravity Banking Suite API...")
+logger.info("Starting PtospectGenius Banking Suite API...")
 
 app = FastAPI(
-    title="Antigravity Banking Suite API",
+    title="PtospectGenius Banking Suite API",
     description="Backend engine for multi-agent FinTech platform",
     version="1.0.0"
 )

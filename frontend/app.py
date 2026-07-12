@@ -8,7 +8,7 @@ import streamlit as st
 from api_client import APIClient
 import uuid
 
-st.set_page_config(page_title="Antigravity Banking Suite", layout="wide", initial_sidebar_state="collapsed")
+st.set_page_config(page_title="PtospectGenius Banking Suite", layout="wide", initial_sidebar_state="collapsed")
 
 # --- CSS STYLING ---
 st.markdown("""
