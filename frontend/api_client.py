@@ -21,7 +21,7 @@ class APIClient:
     @staticmethod
     def upload_document_bytes(rm_owner: str, filename: str, file_bytes: bytes):
         files = {"file": (filename, file_bytes)}
-        resp = requests.post(f"{API_URL}/leads/upload", params={"rm_owner": rm_owner}, files=files)
+        resp = requests.post(f"{API_URL}/leads/upload", data={"rm_owner": rm_owner}, files=files)
         if resp.status_code == 200:
             return resp.json()
         return {"status": "error"}

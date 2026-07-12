@@ -229,15 +229,19 @@ with col2:
     c2_title, c2_upload = st.columns([2, 1])
     with c2_title:
         st.markdown("### 🎯 CENTRAL WORKSPACE")
+    @st.experimental_dialog("📤 Upload Data") if hasattr(st, "experimental_dialog") else (st.dialog("📤 Upload Data") if hasattr(st, "dialog") else lambda f: f)
+    def upload_dialog():
+        uploaded_file = st.file_uploader("Upload", type=["txt", "csv", "docx", "doc", "xlsx", "xls", "pdf", "numbers", "pages"], label_visibility="collapsed")
+        if uploaded_file is not None:
+            if st.button("Process", use_container_width=True):
+                with st.spinner("Processing..."):
+                    resp = APIClient.upload_document_bytes(rm_owner, uploaded_file.name, uploaded_file.getvalue())
+                    st.success("Uploaded!")
+                    st.rerun()
+
     with c2_upload:
-        with st.popover("📤 Upload Data", use_container_width=True):
-            uploaded_file = st.file_uploader("Upload", type=["txt", "csv", "docx", "doc", "xlsx", "xls", "pdf", "numbers", "pages"], label_visibility="collapsed")
-            if uploaded_file is not None:
-                if st.button("Process", use_container_width=True):
-                    with st.spinner("Processing..."):
-                        resp = APIClient.upload_document_bytes(rm_owner, uploaded_file.name, uploaded_file.getvalue())
-                        st.success("Uploaded!")
-                        st.rerun()
+        if st.button("📤 Upload Data", use_container_width=True):
+            upload_dialog()
 
     if not lead_data:
         st.markdown("<div class='glass-card'>Please select a lead from the directory to view details.</div>", unsafe_allow_html=True)
